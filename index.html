@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>非遗分布图表</title>
+    <script src="/lbb_echarts/echarts.min.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            background-color: #fbf1de;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .chart-container {
+            flex: 1;
+            min-width: 400px;
+            height: 550px;
+            background: #fbf1de;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 15px;
+            transition: transform 0.3s ease;
+        }
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        h2 {
+            text-align: center;
+            color: #75151a;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .chart-container {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 饼图容器 -->
+        <div class="chart-container">
+            <h2>国家级非遗类型及数量特征</h2>
+            <div id="pieChart" style="width: 100%; height: 450px;"></div>
+        </div>
+        
+        <!-- 条形图容器 -->
+        <div class="chart-container">
+            <h2>各批次国家级非遗录入数量</h2>
+            <div id="barChart" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化饼图
+        const pieChart = echarts.init(document.getElementById('pieChart'));
+        const pieOption = {
+            // 在pieOption顶层添加
+            color: [  // 新增颜色数组（放在顶层）
+            '#823227', '#914935', '#a1624b', '#a66c52', '#a66e55',
+            '#ae7b63', '#b78b75', '#bc937d', '#c19c87', '#c5a38f'
+  ],
+            tooltip: {
+            trigger: 'item',           // 触发类型：item(数据项)/axis(坐标轴)
+            backgroundColor: 'rgba(50,50,50,0.7)',
+           
+            textStyle: {
+                color: "#fbf1de",
+                fontSize: 14
+            },
+            formatter: function(params) { // 自定义提示内容
+                return `
+                <div style="font-weight:bold">${params.name}</div>
+                <div>数量：${params.value}</div>
+                <div>占比：${params.percent}%</div>
+                `;
+            }
+            },
+           
+            toolbox: {
+                show: true,
+                feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+                }
+            },
+            
+            series: [
+                {
+                 name: 'Access From',
+                type: 'pie',
+                radius: ['32%', '65%'],
+                avoidLabelOverlap: false,
+                padAngle: 50,
+                itemStyle: {
+                borderWidth: 4,  // 建议减小至2-5px
+                borderRadius: 50,
+                borderColor: '#fbf1de' , // 需明确指定边框颜色
+                lineJoin: 'round',      // 平滑连接（防锯齿）
+                 lineCap: 'round'        // 圆形端点
+                    
+      },
+                 label: {
+                show: true,              // 显示标签
+                position: 'outside',     // 位置：outside(外部)/inside(内部)/center(中心)
+                formatter: '{b}:{c}',  // 格式：名称
+                align: 'center',         // 文本水平对齐
+                verticalAlign: 'middle', // 文本垂直对齐
+                rich: {                  // 富文本样式
+                name: {
+                    fontSize: 10,
+                    color: '#333',
+                    padding: [0, 5, 0, 5]
+                },
+                percent: {
+                    fontSize: 10,
+                    color: '#999'
+                }
+                }
+            },
+            labelLine: {
+                show: true,              // 显示引导线
+                length: 10,              // 第一段线长度
+                length2: 5,             // 第二段线长度
+                smooth: false,            // 平滑曲线
+                lineStyle: {
+                width: 1,
+                type: ''
+                }
+            },
+            emphasis: {
+            itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.5)' },
+            label: { show: true, fontWeight: 'bold' }
+},
+            data: [
+             { value: 629, name: '传统技艺' },
+             { value: 492, name: '民俗' },
+            { value: 473, name: '传统戏剧' },
+            { value: 417, name: '传统美术' },
+            { value: 431, name: '传统音乐' },
+            { value: 356, name: '传统舞蹈' },
+            { value: 166, name: '传统体育' },
+            { value: 182, name: '传统医药' },
+            { value: 213, name: '曲艺' },
+             { value: 251, name: '民间文学' },
+          
+                ]
+                }
+                ]
+        };
+
+       // 初始化条形图
+const barChart = echarts.init(document.getElementById('barChart'));
+const barOption = {
+    tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'none'
+    },
+    formatter: function (params) {
+      return params[0].name + ': ' + params[0].value;
+    }
+  },
+   toolbox: {
+                show: true,
+                feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true }
+                }
+            },
+  xAxis: {
+    data: ['第一批', '第二批', '第三批', '第四批', '第五批'],
+    axisTick: { show: false },
+    axisLine: { show: false },
+    axisLabel: {
+      color: '#914935'
+    }
+  },
+  yAxis: {
+    name: '非遗录入数量(项)',
+    nameTextStyle: {
+  color: '#914935',     // 文字颜色
+  fontSize: 14,         // 字体大小
+  fontWeight: 'bold',   // 字重（normal/bold/bolder）
+  fontFamily: 'Microsoft YaHei', // 字体类型
+  padding: [0, 0, 10, 10] // 名称与坐标轴的间距[上,右,下,左]
+},
+    splitLine: { show: true },
+    axisTick: { show: false },
+    axisLine: { show: false },
+    axisLabel: { show: true,
+         color: '#914935'
+
+    }
+  },
+  color: ['#914935'],
+  series: [
+    {
+      name: 'hill',
+      type: 'pictorialBar',
+      barCategoryGap: '-130%',
+      // symbol: 'path://M0,10 L10,10 L5,0 L0,10 z',
+      symbol: 'path://M0,10 L10,10 C5.5,10 5.5,5 5,0 C4.5,5 4.5,10 0,10 z',
+      itemStyle: {
+        opacity: 0.7
+      },
+       label: {
+                show: true,  
+                bottom:5,            // 显示标签
+                position: 'outside',     // 位置：outside(外部)/inside(内部)/center(中心)
+                formatter: '{c}',  // 格式：数量
+                align: 'center',         // 文本水平对齐
+                verticalAlign: 'middle', // 文本垂直对齐
+                 padding: [0, 0, 10, 0] ,
+                rich: {                  // 富文本样式
+                name: {
+                    fontSize: 10,
+                    color: '#333',
+                    padding: [0, 5, 0, 5]
+                },
+                percent: {
+                    fontSize: 10,
+                    color: '#999'
+                }
+                }
+            },
+      emphasis: {
+        itemStyle: {
+          opacity: 1
+        }
+      },
+      data: [763,1352,567,463,465],
+      z: 10
+    },
+    
+      
+    
+  ]
+      
+            
+};
+barChart.setOption(barOption);
+
+
+        // 应用配置
+        pieChart.setOption(pieOption);
+        barChart.setOption(barOption);
+
+        // 响应式调整
+        window.addEventListener('resize', function() {
+            pieChart.resize();
+            barChart.resize();
+        });
+    </script>
+</body>
+</html>
